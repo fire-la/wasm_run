@@ -33,8 +33,11 @@ wasmi = { version = "1.0.8", optional = true }
 wasmi_wasi = { version = "1.0.8", optional = true }
 
 [features]
-# Default to wasmtime as it supports more features (GC, threads, etc.)
-default = ["wasmtime-runtime", "wasi"]
+# Default to wasmi (ADR-0101: iOS forbids JIT, so iOS MUST use the wasmi >=1.0
+# interpreter). lib.rs picks api_wasmi.rs via #[cfg(not(feature = "wasmtime"))].
+# wasmtime-runtime remains available as an opt-in feature for JIT-capable hosts
+# (macOS desktop / Android arm64) when revisited.
+default = ["wasmi-runtime", "wasi"]
 
 # Use wasmtime runtime (recommended - supports all features)
 # Note: Using dependency names directly (not dep:) so that implicit features are enabled
