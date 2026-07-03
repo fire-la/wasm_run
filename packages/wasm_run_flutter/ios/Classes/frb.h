@@ -693,9 +693,8 @@ union WasmValKind *inflate_WasmVal_funcRef(void);
 
 union WasmValKind *inflate_WasmVal_externRef(void);
 
-union WasmValKind *inflate_WasmVal_anyRef(void);
-
-union WasmValKind *inflate_WasmVal_exnRef(void);
+// inflate_WasmVal_anyRef / _exnRef declarations omitted (wasmtime-only; see
+// dummy_method_to_enforce_bundling note below).
 
 void free_WireSyncReturn(WireSyncReturn ptr);
 
@@ -838,8 +837,9 @@ static int64_t dummy_method_to_enforce_bundling(void) {
     dummy_var ^= ((int64_t) (void*) inflate_WasmVal_v128);
     dummy_var ^= ((int64_t) (void*) inflate_WasmVal_funcRef);
     dummy_var ^= ((int64_t) (void*) inflate_WasmVal_externRef);
-    dummy_var ^= ((int64_t) (void*) inflate_WasmVal_anyRef);
-    dummy_var ^= ((int64_t) (void*) inflate_WasmVal_exnRef);
+    // inflate_WasmVal_anyRef / _exnRef omitted: #[cfg(feature="wasmtime")] in the
+    // Rust crate (GC/exception refs are wasmtime-only); the wasmi .a does not
+    // define them, so forcing a reference here breaks the app link.
     dummy_var ^= ((int64_t) (void*) free_WireSyncReturn);
     dummy_var ^= ((int64_t) (void*) store_dart_post_cobject);
     dummy_var ^= ((int64_t) (void*) get_dart_object);

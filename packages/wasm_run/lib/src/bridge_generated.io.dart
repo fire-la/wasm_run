@@ -804,20 +804,12 @@ class WasmRunNativePlatform extends FlutterRustBridgeBase<WasmRunNativeWire> {
       wireObj.kind.ref.externRef.ref.field0 = pre_field0;
       return;
     }
-    if (apiObj is WasmVal_anyRef) {
-      var pre_field0 = api2wire_opt_box_autoadd_WAnyRef(apiObj.field0);
-      wireObj.tag = 7;
-      wireObj.kind = inner.inflate_WasmVal_anyRef();
-      wireObj.kind.ref.anyRef.ref.field0 = pre_field0;
-      return;
-    }
-    if (apiObj is WasmVal_exnRef) {
-      var pre_field0 = api2wire_opt_box_autoadd_WExnRef(apiObj.field0);
-      wireObj.tag = 8;
-      wireObj.kind = inner.inflate_WasmVal_exnRef();
-      wireObj.kind.ref.exnRef.ref.field0 = pre_field0;
-      return;
-    }
+    // WasmVal_anyRef / WasmVal_exnRef encode branches intentionally omitted:
+    // inflate_WasmVal_anyRef/exnRef are #[cfg(feature="wasmtime")] in the Rust
+    // crate (GC/exception refs are wasmtime-only; wasmi never yields them), so
+    // they are absent from the wasmi .a the iOS build links. The parser runtime
+    // never sends a WasmVal argument, so this encode path is never hit with
+    // these variants. Matches published wasm_run 0.1.0+2 (no anyRef/exnRef).
   }
 }
 
@@ -1353,7 +1345,7 @@ class WasmRunNativeWire implements FlutterRustBridgeWireBase {
   WireSyncReturn wire_create_global__method__WasmRunModuleId(
     ffi.Pointer<wire_WasmRunModuleId> that,
     ffi.Pointer<wire_WasmVal> value,
-    ffi.Pointer<ffi.Bool> mutable_,
+    bool mutable_,
   ) {
     return _wire_create_global__method__WasmRunModuleId(that, value, mutable_);
   }
@@ -1363,14 +1355,14 @@ class WasmRunNativeWire implements FlutterRustBridgeWireBase {
           WireSyncReturn Function(
             ffi.Pointer<wire_WasmRunModuleId>,
             ffi.Pointer<wire_WasmVal>,
-            ffi.Pointer<ffi.Bool>,
+            ffi.Bool,
           )>>('wire_create_global__method__WasmRunModuleId');
   late final _wire_create_global__method__WasmRunModuleId =
       _wire_create_global__method__WasmRunModuleIdPtr.asFunction<
           WireSyncReturn Function(
             ffi.Pointer<wire_WasmRunModuleId>,
             ffi.Pointer<wire_WasmVal>,
-            ffi.Pointer<ffi.Bool>,
+            bool,
           )>();
 
   WireSyncReturn wire_create_table__method__WasmRunModuleId(
@@ -3108,27 +3100,8 @@ class WasmRunNativeWire implements FlutterRustBridgeWireBase {
   late final _inflate_WasmVal_externRef = _inflate_WasmVal_externRefPtr
       .asFunction<ffi.Pointer<WasmValKind> Function()>();
 
-  ffi.Pointer<WasmValKind> inflate_WasmVal_anyRef() {
-    return _inflate_WasmVal_anyRef();
-  }
-
-  late final _inflate_WasmVal_anyRefPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<WasmValKind> Function()>>(
-    'inflate_WasmVal_anyRef',
-  );
-  late final _inflate_WasmVal_anyRef = _inflate_WasmVal_anyRefPtr
-      .asFunction<ffi.Pointer<WasmValKind> Function()>();
-
-  ffi.Pointer<WasmValKind> inflate_WasmVal_exnRef() {
-    return _inflate_WasmVal_exnRef();
-  }
-
-  late final _inflate_WasmVal_exnRefPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<WasmValKind> Function()>>(
-    'inflate_WasmVal_exnRef',
-  );
-  late final _inflate_WasmVal_exnRef = _inflate_WasmVal_exnRefPtr
-      .asFunction<ffi.Pointer<WasmValKind> Function()>();
+  // inflate_WasmVal_anyRef / _exnRef omitted: those Rust fns are
+  // #[cfg(feature="wasmtime")] and absent from the wasmi build (see above).
 
   void free_WireSyncReturn(WireSyncReturn ptr) {
     return _free_WireSyncReturn(ptr);
