@@ -30,7 +30,13 @@ Native WebAssembly runtime using wasmtime or wasmi, built from Rust source via C
   # Dummy source file to satisfy CocoaPods
   s.source_files = 'Classes/**/*'
 
-  # Static library built by cargokit
+  # Declare the Cargokit-built static lib so CocoaPods links its symbols (the
+  # frb _wire_*/_share_opaque_* bridge). Do NOT set `static_framework`: that
+  # flags this pod as a statically-linked transitive dependency, which app
+  # targets using `use_frameworks!` (dynamic) reject ("transitive dependencies
+  # that include statically linked binaries"). Without static_framework the pod
+  # is a normal dynamic framework that embeds the vendored static lib — the
+  # standard pattern for prebuilt-static-lib pods. OTHER_LDFLAGS -force_load
+  # above additionally prevents dead-stripping of the bridge symbols.
   s.vendored_libraries = 'libwasm_run_native.a'
-  s.static_framework = true
 end
