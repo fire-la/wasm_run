@@ -846,16 +846,18 @@ class WasmRunNativeWire implements FlutterRustBridgeWireBase {
     ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
   ) : _lookup = lookup;
 
-  void store_dart_post_cobject(int ptr) {
+  void store_dart_post_cobject(
+    DartPostCObjectFnType ptr,
+  ) {
     return _store_dart_post_cobject(ptr);
   }
 
   late final _store_dart_post_cobjectPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Int)>>(
+      _lookup<ffi.NativeFunction<ffi.Void Function(DartPostCObjectFnType)>>(
     'store_dart_post_cobject',
   );
   late final _store_dart_post_cobject =
-      _store_dart_post_cobjectPtr.asFunction<void Function(int)>();
+      _store_dart_post_cobjectPtr.asFunction<void Function(DartPostCObjectFnType)>();
 
   Object get_dart_object(int ptr) {
     return _get_dart_object(ptr);
@@ -2483,15 +2485,15 @@ class WasmRunNativeWire implements FlutterRustBridgeWireBase {
   late final _new_box_autoadd_atomics_0 = _new_box_autoadd_atomics_0Ptr
       .asFunction<ffi.Pointer<wire_Atomics> Function()>();
 
-  ffi.Pointer<ffi.Bool> new_box_autoadd_bool_0(ffi.Pointer<ffi.Bool> value) {
+  ffi.Pointer<ffi.Bool> new_box_autoadd_bool_0(bool value) {
     return _new_box_autoadd_bool_0(value);
   }
 
   late final _new_box_autoadd_bool_0Ptr = _lookup<
-          ffi.NativeFunction<ffi.Pointer<ffi.Bool> Function(ffi.Pointer<ffi.Bool>)>>(
+          ffi.NativeFunction<ffi.Pointer<ffi.Bool> Function(ffi.Bool)>>(
       'new_box_autoadd_bool_0');
   late final _new_box_autoadd_bool_0 = _new_box_autoadd_bool_0Ptr
-      .asFunction<ffi.Pointer<ffi.Bool> Function(ffi.Pointer<ffi.Bool>)>();
+      .asFunction<ffi.Pointer<ffi.Bool> Function(bool)>();
 
   ffi.Pointer<wire_CompiledComponent> new_box_autoadd_compiled_component_0() {
     return _new_box_autoadd_compiled_component_0();
@@ -3526,3 +3528,12 @@ final class wire_Atomics extends ffi.Struct {
   @ffi.UintPtr()
   external int field0;
 }
+
+// ponytail: function-pointer type for Dart's postCObject, matching frb 1.82.6's
+// FlutterRustBridgeWireBase.store_dart_post_cobject contract (structurally
+// identical to DartPostCObject so the override type-checks). Ported from the
+// published wasm_run 0.1.0+2 generated bindings.
+typedef DartPostCObjectFnType = ffi.Pointer<
+    ffi.NativeFunction<
+        ffi.Bool Function(DartPort port_id, ffi.Pointer<ffi.Void> message)>>;
+typedef DartPort = ffi.Int64;

@@ -2137,6 +2137,13 @@ class WasmRunNativeImpl implements WasmRunNative {
   factory WasmRunNativeImpl.wasm(FutureOr<WasmModule> module) =>
       WasmRunNativeImpl(module as ExternalLibrary);
   WasmRunNativeImpl.raw(this._platform);
+
+  // ponytail: exposes the private FFI platform so the hand-written
+  // wasm_bindings interop (_wasm_interop_native.dart) can reach the
+  // api2wire_* helpers. No frb regen workflow exists (no yaml), so this
+  // generated file is hand-maintained, same status as the bool codegen fix.
+  WasmRunNativePlatform get platform => _platform;
+
   WasmRunModuleId moduleBuilder(
       {required CompiledModule module,
       int? numThreads,

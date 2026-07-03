@@ -128,6 +128,11 @@ WasmVal _fromWasmValueRaw(ValueTy ty, Object? value, WasmRunModuleId module) {
         return WasmVal.funcRef();
       }
       return _makeFunction(value as WasmFunction, module);
+    default:
+      // ponytail: GC/exception/continuation refs (anyRef, eqRef, i31Ref,
+      // structRef, arrayRef, exnRef, contRef) are wasmtime-only; wasmi never
+      // yields them, so guard the exhaustiveness check rather than enumerate.
+      throw UnimplementedError('Unsupported ValueTy on native: $ty');
   }
 }
 
@@ -312,7 +317,7 @@ class _References {
     try {
       final l = wireSyncReturnIntoDart(value);
       final input = _wire2api_list_wasm_val(l[0]);
-      final platform = (defaultInstance() as WasmRunDartImpl).platform;
+      final platform = (defaultInstance() as WasmRunNativeImpl).platform;
       final mapped = executeFunction(functionId, input);
       // TODO: null pointer when mapped is empty?
       // ignore: invalid_use_of_protected_member
@@ -372,6 +377,9 @@ class _References {
         return _toWasmFunction(func, module, null);
       },
       externRef: (id) => getReference(id, module),
+      // ponytail: GC/exception refs are wasmtime-only; wasmi never yields them.
+      anyRef: (_) => null,
+      exnRef: (_) => null,
     );
   }
 }

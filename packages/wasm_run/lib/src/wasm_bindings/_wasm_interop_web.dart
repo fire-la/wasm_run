@@ -297,6 +297,9 @@ class _Builder extends WasmInstanceBuilder {
         // TODO(web): Implement funcRef "anyfunc"
         inner = Global.externref(value: val, mutable: mutable);
         break;
+      default:
+        throw UnsupportedError(
+            'Unsupported global ValueTy on web: ${value.type}');
     }
     return _Global(inner, type, value);
   }

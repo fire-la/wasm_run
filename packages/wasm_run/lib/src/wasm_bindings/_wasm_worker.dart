@@ -175,6 +175,8 @@ class WasmWorker {
             case ValueTy.funcRef:
               // TODO: implement refs
               throw UnimplementedError();
+            default:
+              throw UnimplementedError();
           }
         }
         atomics.notify(Int32List.sublistView(bytes), 0, 1);
