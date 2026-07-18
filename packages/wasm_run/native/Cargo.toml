@@ -26,7 +26,7 @@ cap-std = "4.0.0"
 # Wasmtime runtime (default) - supports all features including GC, threads, SIMD
 # Enable component-model for WIT and Component Model support
 wasmtime = { version = "41.0.1", optional = true, features = ["component-model"] }
-wasmtime-wasi = { version = "41.0.1", optional = true }
+wasmtime-wasi = { version = "46.0.1", optional = true }
 
 # Wasmi runtime (interpreter) - supports SIMD, no threads/GC
 wasmi = { version = "1.0.8", optional = true }
