@@ -31,6 +31,6 @@ dev_dependencies:
   test: ^1.26.0
   build_runner: ^2.4.13
   freezed: ^2.5.2
-  very_good_analysis: ^6.0.0
+  very_good_analysis: ">=6.0.0 <11.0.0"
   wasm_run_example:
     path: example
