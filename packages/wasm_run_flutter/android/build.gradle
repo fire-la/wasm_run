@@ -28,6 +28,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'com.example.wasm_run_flutter'
     compileSdk 34
 
     compileOptions {
