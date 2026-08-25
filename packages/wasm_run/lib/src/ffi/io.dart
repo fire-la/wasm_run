@@ -54,6 +54,13 @@ ExternalLibrary createLibraryImpl() {
         return _validateLibrary(DynamicLibrary.executable());
       } catch (_) {}
       library = DynamicLibrary.open(appleLib);
+    } else if (Platform.isAndroid) {
+      // Android: the native library is packaged as a shared jniLib by
+      // wasm_run_native's Cargokit build, which names it after the crate —
+      // libwasm_run_native.so (NOT the desktop libwasm_run_dart.so). Opening
+      // the desktop name made every load fail, so plugin registration fell
+      // through to the desktop download path and threw.
+      library = DynamicLibrary.open('libwasm_run_native.so');
     } else if (Platform.isWindows) {
       library = DynamicLibrary.open(windowsLib);
     } else {
