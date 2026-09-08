@@ -131,8 +131,14 @@ class CargoKitPlugin implements Plugin<Project> {
 
             def platforms = com.flutter.gradle.FlutterPluginUtils.getTargetPlatforms(project).collect()
 
-            // Same thing addFlutterDependencies does in flutter.gradle
-            if (buildType == "debug") {
+            // Same thing addFlutterDependencies does in flutter.gradle.
+            // Opt-out for disk-constrained CI builds: debug APKs targeting
+            // physical devices don't need the emulator ABIs, and each extra
+            // ABI is a full cargo build. Set the cargokitNoEmulatorAbis gradle
+            // property (CI-friendly: ORG_GRADLE_PROJECT_cargokitNoEmulatorAbis=1
+            // in the environment) to skip them. Emulator lanes (x86_64 image)
+            // must NOT set it — they load the x64 .so.
+            if (buildType == "debug" && !project.hasProperty('cargokitNoEmulatorAbis')) {
                 platforms.add("android-x86")
                 platforms.add("android-x64")
             }
